@@ -6,6 +6,9 @@
     <title>Peng2333</title>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
     <style>
+        :root {
+            --heart-size: 10px; /* 这里设置基础爱心大小 */
+        }
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -22,27 +25,29 @@
         }
         .heart {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: var(--heart-size);
+            height: var(--heart-size);
             background-color: var(--heart-color, tomato);
-            transform: rotate(-45deg);
+            transform-origin: center;
+            z-index: 1; /* 提升心形图案的层级，避免被遮挡 */
         }
         .heart:before,
         .heart:after {
             content: "";
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: inherit;
+            height: inherit;
             border-radius: 50%;
-            background-color: var(--heart-color, tomato);
+            background-color: inherit;
+            z-index: -1; /* 确保伪元素在心形图案下方 */
         }
         .heart:before {
-            top: -10px;
+            top: calc(-1 * var(--heart-size) / 2);
             left: 0;
         }
         .heart:after {
             top: 0;
-            left: 10px;
+            left: calc(var(--heart-size) / 2);
         }
         #resetButton {
             position: fixed;
@@ -63,19 +68,32 @@
     </style>
 </head>
 <body>
-    <button id="resetButton">重置爱心</button>
+    <button id="resetButton">清空</button>
 
     <script>
         document.addEventListener('click', function(e) {
             if (e.target.id !== 'resetButton') {
                 var colors = ['#FFB6C1', '#FFD700', '#FF69B4', '#98FB98', '#87CEFA', '#FF6347', '#B0E0E6'];
                 var color = colors[Math.floor(Math.random() * colors.length)];
-                
+
+                // 随机大小在50%到200%之间
+                var minSize = 0.5;
+                var maxSize = 2;
+                var sizeMultiplier = Math.random() * (maxSize - minSize) + minSize;
+                var heartSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--heart-size')) * sizeMultiplier + 'px';
+
+                // 随机旋转角度在-90度到0度之间
+                var minAngle = -90;
+                var maxAngle = 0;
+                var rotationAngle = Math.random() * (maxAngle - minAngle) + minAngle;
+
                 var heart = document.createElement('div');
                 heart.className = 'heart';
                 heart.style.setProperty('--heart-color', color);
-                heart.style.top = (e.clientY - 10) + 'px';
-                heart.style.left = (e.clientX - 10) + 'px';
+                heart.style.setProperty('--heart-size', heartSize);
+                heart.style.top = (e.clientY - parseFloat(heartSize) / 2) + 'px';
+                heart.style.left = (e.clientX - parseFloat(heartSize) / 2) + 'px';
+                heart.style.transform = 'rotate(' + rotationAngle + 'deg)';
 
                 document.body.appendChild(heart);
             }
