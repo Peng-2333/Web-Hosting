@@ -3,14 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>静态网页测试</title>
-    <link rel="icon" href="/Web-Hosting/favicon.png" type="image/png">
+    <title>Peng2333</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f8ff;
+        }
+        p {
+            font-size: 1.2em;
+        }
+        h1 {
+            color: #ff69b4;
+        }
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--heart-color, tomato);
+            transform: rotate(-45deg);
+        }
+        .heart:before,
+        .heart:after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--heart-color, tomato);
+        }
+        .heart:before {
+            top: -10px;
+            left: 0;
+        }
+        .heart:after {
+            top: 0;
+            left: 10px;
+        }
+        #resetButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: #ff69b4;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        #resetButton:hover {
+            background-color: #ff1493;
+        }
+    </style>
 </head>
 <body>
-    <p>本网页由GitHub Page静态托管! </p>
-    <p>Welcome to my static website hosted on GitHub Pages.</p>
+    <button id="resetButton">重置爱心</button>
 
-    
-    <h1>哈哈哈哈哈哈哈</h1>
+    <script>
+        document.addEventListener('click', function(e) {
+            if (e.target.id !== 'resetButton') {
+                var colors = ['#FFB6C1', '#FFD700', '#FF69B4', '#98FB98', '#87CEFA', '#FF6347', '#B0E0E6'];
+                var color = colors[Math.floor(Math.random() * colors.length)];
+                
+                var heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.setProperty('--heart-color', color);
+                heart.style.top = (e.clientY - 10) + 'px';
+                heart.style.left = (e.clientX - 10) + 'px';
+
+                document.body.appendChild(heart);
+            }
+        });
+
+        document.getElementById('resetButton').addEventListener('click', function() {
+            var hearts = document.querySelectorAll('.heart');
+            hearts.forEach(function(heart) {
+                heart.remove();
+            });
+        });
+    </script>
 </body>
 </html>
