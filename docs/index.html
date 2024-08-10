@@ -7,7 +7,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
     <style>
         :root {
-            --heart-size: 10px; /* 这里设置基础爱心大小 */
+            --heart-size: 10px; /* 设置基础爱心大小 */
         }
         body {
             font-family: Arial, sans-serif;
@@ -71,32 +71,34 @@
     <button id="resetButton">清空</button>
 
     <script>
-        document.addEventListener('click', function(e) {
-            if (e.target.id !== 'resetButton') {
-                var colors = ['#FFB6C1', '#FFD700', '#FF69B4', '#98FB98', '#87CEFA', '#FF6347', '#B0E0E6'];
-                var color = colors[Math.floor(Math.random() * colors.length)];
+        let isDrawing = false;
+        let lastMousePosition = { x: 0, y: 0 };
 
-                // 随机大小在50%到200%之间
-                var minSize = 0.5;
-                var maxSize = 2;
-                var sizeMultiplier = Math.random() * (maxSize - minSize) + minSize;
-                var heartSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--heart-size')) * sizeMultiplier + 'px';
-
-                // 随机旋转角度在-90度到0度之间
-                var minAngle = -90;
-                var maxAngle = 0;
-                var rotationAngle = Math.random() * (maxAngle - minAngle) + minAngle;
-
-                var heart = document.createElement('div');
-                heart.className = 'heart';
-                heart.style.setProperty('--heart-color', color);
-                heart.style.setProperty('--heart-size', heartSize);
-                heart.style.top = (e.clientY - parseFloat(heartSize) / 2) + 'px';
-                heart.style.left = (e.clientX - parseFloat(heartSize) / 2) + 'px';
-                heart.style.transform = 'rotate(' + rotationAngle + 'deg)';
-
-                document.body.appendChild(heart);
+        document.addEventListener('mousedown', function(e) {
+            if (e.button === 0 && e.target.id !== 'resetButton') { // 只在左键按下时启动
+                isDrawing = true;
+                lastMousePosition = { x: e.clientX, y: e.clientY };
+                createHeart(e.clientX, e.clientY);
             }
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (isDrawing) {
+                // 计算鼠标移动的距离
+                const distance = Math.sqrt(
+                    Math.pow(e.clientX - lastMousePosition.x, 2) +
+                    Math.pow(e.clientY - lastMousePosition.y, 2)
+                );
+
+                if (distance > 10) { // 只有当移动超过10px时才生成新的爱心
+                    lastMousePosition = { x: e.clientX, y: e.clientY };
+                    createHeart(e.clientX, e.clientY);
+                }
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDrawing = false; // 结束绘制
         });
 
         document.getElementById('resetButton').addEventListener('click', function() {
@@ -105,6 +107,34 @@
                 heart.remove();
             });
         });
+
+        function createHeart(x, y) {
+            var colors = ['#FFB6C1', '#FFD700', '#FF69B4', '#98FB98', '#87CEFA', '#FF6347', '#B0E0E6'];
+            var color = colors[Math.floor(Math.random() * colors.length)];
+
+            // 随机大小在50%到200%之间
+            var minSize = 0.5;
+            var maxSize = 2;
+            var sizeMultiplier = Math.random() * (maxSize - minSize) + minSize;
+            var heartSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--heart-size')) * sizeMultiplier + 'px';
+
+            // 随机旋转角度在-90度到0度之间
+            var minAngle = -90;
+            var maxAngle = 0;
+            var rotationAngle = Math.random() * (maxAngle - minAngle) + minAngle;
+
+            var heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.setProperty('--heart-color', color);
+            heart.style.setProperty('--heart-size', heartSize);
+            heart.style.top = (y - parseFloat(heartSize) / 2) + 'px';
+            heart.style.left = (x - parseFloat(heartSize) / 2) + 'px';
+            heart.style.transform = 'rotate(' + rotationAngle + 'deg)';
+
+            document.body.appendChild(heart);
+        }
     </script>
 </body>
 </html>
+
+
